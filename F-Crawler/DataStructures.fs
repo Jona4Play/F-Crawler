@@ -12,15 +12,15 @@ type ImageInfo = {
 
 type Document = {
     ResponseTime:int64
-    Emails: string list
+    Emails: string array
     Imagedata: ImageInfo list
-    CSSlinks: string list
-    JSlinks: string list
+    CSSlinks: string array
+    JSlinks: string array
     CrawlDate: DateTime
     URL: string
     Links: string list
     HTMLstring : string
-    Metatags : string list
+    Metatags : string array
 }
 
 let shuffleList<'a> (list: 'a list) : 'a list =

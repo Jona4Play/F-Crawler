@@ -7,7 +7,7 @@ open Newtonsoft.Json
 let basedir = AppContext.BaseDirectory
 let bufferdir = "buffer.json"
 
-let readBufferFromJson filename =
+let readBufferFromJson(filename) =
     File.ReadAllText(Path.Combine(basedir, filename)) 
     |> JsonConvert.DeserializeObject<list<string>>
 

@@ -45,9 +45,9 @@ let createURIfromRelative(baseurl:string, url:string) : string option =
     with
         | _ -> None
 
-let linksof(doc: HtmlDocument, baseurl:string) : string list =
+let linksof(data:HtmlDocument, baseurl:string) : string list =
     let result = 
-        doc.Descendants [ "a" ]
+        data.Descendants [ "a" ]
         |> Seq.choose (fun x ->
             x.TryGetAttribute("href")
             |> Option.map (fun a -> a.Value()))
@@ -56,37 +56,37 @@ let linksof(doc: HtmlDocument, baseurl:string) : string list =
     result
 
 
-let searchJSReferences (htmlDocument: HtmlDocument, baseurl:string) =
+let searchJSReferences (data: HtmlDocument, baseurl:string): string array =
     let javascriptLinks =
-        htmlDocument.Descendants "script"
+        data.Descendants "script"
         |> Seq.choose (fun x ->
             x.TryGetAttribute("src")
             |> Option.map(fun b -> b.Value()))
-        |> Seq.toList
+        |> Seq.toArray
 
-    let (absolute, relative) = javascriptLinks |> List.partition(fun x -> isAbsoluteUrl x)
+    let (absolute, relative) = javascriptLinks |> Array.partition(fun x -> isAbsoluteUrl x)
     relative
-    |> List.choose (fun x -> 
+    |> Array.choose (fun x -> 
         createURIfromRelative(baseurl, x)
         |> Option.map (fun x -> x))
-    |> List.append absolute
+    |> Array.append absolute
 
-let searchCSSReferences (doc : HtmlDocument, baseurl:string) : string list =
+let searchCSSReferences (data : HtmlDocument, baseurl:string) : string array =
     let cssReferences =
-        doc.Descendants "link"
+        data.Descendants "link"
         |> Seq.filter (fun x -> x.HasAttribute("rel", "stylesheet"))
         |> Seq.map (fun x -> x.AttributeValue("href"))
-        |> List.ofSeq
-    let (absolute, relative) = cssReferences |> List.partition isAbsoluteUrl
+        |> Array.ofSeq
+    let (absolute, relative) = cssReferences |> Array.partition isAbsoluteUrl
     relative
-    |> List.choose(fun x -> 
+    |> Array.choose(fun x -> 
         createURIfromRelative(baseurl,x))
-    |> List.append absolute
+    |> Array.append absolute
 
 
 
-let extractImageInfo (doc:HtmlDocument, baseurl:string) : ImageInfo list =
-    doc.Descendants ["img"]
+let extractImageInfo (data:HtmlDocument, baseurl:string) : ImageInfo list =
+    data.Descendants ["img"]
     |> Seq.choose (fun node ->
         let description = node.AttributeValue("alt")
         let url = node.AttributeValue("src")
@@ -104,6 +104,7 @@ let extractImageInfo (doc:HtmlDocument, baseurl:string) : ImageInfo list =
     |> Seq.toList
 
 let extractMetaTags (html: HtmlDocument) =
+    
     let getTitle () =
         try
             html.Descendants "title" |> Seq.map (fun x -> x.InnerText()) |> Seq.head
@@ -130,7 +131,7 @@ let extractMetaTags (html: HtmlDocument) =
     let title = getTitle ()
     let description = getDescription()
     let canonicalLink = getCanonicalLink ()
-    [title; description.ToString(); canonicalLink]
+    [|title; description.ToString(); canonicalLink|]
 
 let filterFileEndings (input: string) : bool =
     match input.EndsWith(".pdf") || input.EndsWith(".png") || input.EndsWith(".webp") ||
@@ -151,9 +152,9 @@ let filterFileEndings (input: string) : bool =
 
 
 
-let extractEmails (doc:HtmlDocument) =
+let extractEmails (data:string) =
     let emailRegex = Regex(@"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b", RegexOptions.IgnoreCase)
-    doc.ToString()
+    data
     |> emailRegex.Matches
     |> Seq.cast<Match>
     |> Seq.map (fun m -> m.Value)

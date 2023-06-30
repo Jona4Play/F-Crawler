@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "F-Crawler", "F-Crawler\F-Crawler.fsproj", "{0B8926DA-89C7-4F2C-8C85-9965167C3679}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "F-Crawler", "F-Crawler\F-Crawler.fsproj", "{0B8926DA-89C7-4F2C-8C85-9965167C3679}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "F-Crawler-Units", "F-Crawler-Units\F-Crawler-Units.fsproj", "{C7E6BCF1-A42F-411C-8C1D-715427DD9D8D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{0B8926DA-89C7-4F2C-8C85-9965167C3679}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B8926DA-89C7-4F2C-8C85-9965167C3679}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B8926DA-89C7-4F2C-8C85-9965167C3679}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7E6BCF1-A42F-411C-8C1D-715427DD9D8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7E6BCF1-A42F-411C-8C1D-715427DD9D8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7E6BCF1-A42F-411C-8C1D-715427DD9D8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7E6BCF1-A42F-411C-8C1D-715427DD9D8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

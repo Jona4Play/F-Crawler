@@ -13,39 +13,45 @@ open System.Collections.Generic
 let client = new HttpClient()
 client.Timeout <- TimeSpan.FromSeconds(5)
 
-
 let line = "------------------------------------"
 
 let printline() = printfn "%s" line
 
-let getHtml(link:string) : (HtmlDocument * int64 * string) option =
+let getHtml(link:string) : (string * int64 * string) option =
     let sw = Stopwatch.StartNew()
     async {
         try
             let! htmlContent = Async.AwaitTask(client.GetStringAsync(link))
-            return Some (HtmlDocument.Parse(htmlContent), sw.ElapsedMilliseconds, link)
+            return Some (htmlContent, sw.ElapsedMilliseconds, link)
         with
             | _ -> return None
     } |> Async.RunSynchronously
 
     
-let extractdata (basedata: HtmlDocument * int64 * string) : Document * string list =
-    let (doc, responsetime, baseurl) = basedata
+let extractdata (basedata: string * int64 * string) : Document * string list =
+    let (data, responsetime, baseurl) = basedata
+    let doc = HtmlDocument.Parse(data)
     let links = linksof(doc,baseurl)
     let prioritylinks = getprioritylinksof(links, baseurl)
     let jslinks = (doc,baseurl) |> searchJSReferences
     let csslinks = (doc,baseurl) |> searchCSSReferences
     let images = (doc,baseurl) |> extractImageInfo
     let metatags = doc |> extractMetaTags
-    let emails = doc |> extractEmails |> List.ofSeq
+    let emails = data |> extractEmails |> Array.ofSeq
 
-    ({URL=baseurl; Emails=emails; Imagedata=images; CSSlinks=csslinks; JSlinks=jslinks; CrawlDate=DateTime.Now; ResponseTime=responsetime; Links=links; HTMLstring=Uglify.Html(doc.ToString()).ToString(); Metatags=metatags}, prioritylinks)
+    GC.Collect()
+
+    ({URL=baseurl; Emails=emails; Imagedata=images; CSSlinks=csslinks; JSlinks=jslinks; CrawlDate=DateTime.Now; ResponseTime=responsetime; Links=links; HTMLstring=data; Metatags=metatags}, prioritylinks)
 
 
 
 
 let startCrawling(links: string list) : Document array * string list =
-    let results = links |> Array.ofList |> Array.Parallel.choose getHtml |> Array.Parallel.map extractdata
+    let results = 
+        links 
+        |> Array.ofList 
+        |> Array.Parallel.choose getHtml
+        |> Array.Parallel.map extractdata
     let docs = results |> Array.map fst
     let prioritylinks = results |> Array.map snd |> List.concat |> shuffleList |> List.truncate 1000
     (docs, prioritylinks)
