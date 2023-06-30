@@ -90,5 +90,18 @@ let main(args: string array) =
         | ex -> 
              printfn "An error occurred: %s" ex.Message
              itemmenu(links)
-    itemmenu(["https://minidump.net/performance-best-practices-in-c-b85a47bdd93a"])
+    itemmenu(
+        [
+            "https://www.wikipedia.org/"
+            "https://www.reddit.com/"
+            "https://dmoz-odp.org/"
+            "https://www.cnn.com/" 
+            "https://www.bbc.com/"
+            "https://www.nytimes.com/"
+            "https://www.twitter.com/"
+            "https://www.instagram.com/"
+            "https://www.quora.com/"
+            "https://stackexchange.com/"
+            "https://arxiv.org/"
+        ])
     0
